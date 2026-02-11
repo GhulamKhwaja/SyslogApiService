@@ -45,7 +45,6 @@ module.exports.getDeviceDetails = async (ip) => {
       dl.username AS username,
       dl.password AS password,
       dl.loginport AS port,
-      dl.allowed_attempt AS allowedattempt,
 
       dc.commandname AS commandname,
       dc.api_path AS apipath

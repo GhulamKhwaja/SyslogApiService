@@ -53,7 +53,7 @@ async function start() {
           lastSchedule:device.lastSchedule,
           diffEmail:device.diffEmail,
           apipath:device.apipath,
-          allowedattempt:device.allowedattempt,
+          allowedattempt:3,
           detectedMessage: event.message,
           detectedAt: event.timestamp
         };
