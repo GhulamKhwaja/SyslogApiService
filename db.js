@@ -25,13 +25,43 @@ module.exports.getDeviceDetails = async (ip) => {
 
     console.log(`Cache MISS for ${ip} — querying MySQL`);
 
-    // 2️⃣ Query MySQL if not cached
     const [rows] = await pool.execute(
-      "SELECT * FROM deviceinfo WHERE deviceIp = ? LIMIT 1",
-      [ip]
-    );
+  `SELECT 
+      di.deviceId AS deviceId,
+      di.deviceName AS deviceName,
+      di.deviceIp AS deviceIp,
+      di.isBaseLineVersion AS isBaseLineSet,
+      di.config_baseline AS baseLineFile,
+      di.configdiff_email AS diffEmail,
 
-    const device = rows[0];
+      dt.devicetypename AS type,
+
+      ds.lastSchedule AS lastSchedule,
+      ds.nextSchedule AS scheduleTime,
+      ds.is_enabled AS isenabled,
+
+      df.value AS frequency,
+
+      dl.username AS username,
+      dl.password AS password,
+      dl.loginport AS port,
+      dl.allowed_attempt AS allowedattempt,
+
+      dc.commandname AS commandname,
+      dc.api_path AS apipath
+
+   FROM configbackup.deviceinfo di
+   JOIN configbackup.deviceschedule ds ON di.deviceId = ds.deviceId
+   JOIN configbackup.devicelogin dl ON di.deviceId = dl.deviceId
+   JOIN configbackup.devicefrequency df ON df.id = ds.scheduleFrequency
+   JOIN configbackup.devicecommand dc ON dc.commandId = di.commandId
+   JOIN configbackup.deviceType dt ON di.deviceType = dt.devicetypeid
+
+   WHERE di.deviceIp = ?`,
+  [ip]
+);
+
+const device = rows[0];
 
     // 3️⃣ Store in Redis with TTL (10 minutes)
     if (device) {
