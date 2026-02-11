@@ -3,10 +3,10 @@ const redis = require("./cache");
 
 // Create MySQL connection pool
 const pool = mysql.createPool({
-  host: "mysql",          // service name in docker-compose
-  user: "admin",
-  password: "admin",
-  database: "devices",
+  host: "db",          // service name in docker-compose
+  user: "root",
+  password: "mastercom",
+  database: "configbackup",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -27,7 +27,7 @@ module.exports.getDeviceDetails = async (ip) => {
 
     // 2️⃣ Query MySQL if not cached
     const [rows] = await pool.execute(
-      "SELECT * FROM devices WHERE ip = ? LIMIT 1",
+      "SELECT * FROM deviceinfo WHERE deviceIp = ? LIMIT 1",
       [ip]
     );
 
