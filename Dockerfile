@@ -9,6 +9,6 @@ RUN npm install --only=production
 COPY . .
 
 # App port
-EXPOSE 3000
+#EXPOSE 3000
 
-CMD ["node", "app.js"]
+#CMD ["node", "app.js"]

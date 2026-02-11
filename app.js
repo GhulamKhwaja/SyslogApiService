@@ -3,7 +3,7 @@ const db = require("./db");
 
 const kafka = new Kafka({
   clientId: "config-change-detector",
-  brokers: ["192.168.1.10:9092"]
+  brokers: ["kafka:9092"]
 });
 
 const consumer = kafka.consumer({ groupId: "config-change-group" });
