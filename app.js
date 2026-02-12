@@ -44,8 +44,8 @@ async function start() {
         }
 
         const job = {
-          deviceIp: event.deviceIp,
-          deviceId: event.deviceId,
+          deviceIp: device.deviceIp,
+          deviceId: device.deviceId,
           username: device.username,
           password: device.password,
           port:device.port,
