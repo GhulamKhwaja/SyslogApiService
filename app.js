@@ -35,7 +35,7 @@ async function start() {
 
         console.log(`⚙️ Config change detected from ${event.device_ip}`);
         
-        const message = `Config Diff found for device : ${event.device_ip} `;
+        const trapmessage = `Config Diff found for device : ${event.device_ip} `;
 
 
         sendTrap(event.device_ip, trapmessage);
