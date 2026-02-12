@@ -54,7 +54,7 @@ async function start() {
           password: device.password,
           port:device.port,
           commandname: device.commandname,
-          deviceType: device.type,
+          deviceType: device.deviceType,
           scheduleTime:device.scheduleTime,
           lastSchedule:device.lastSchedule,
           diffEmail:device.diffEmail,
