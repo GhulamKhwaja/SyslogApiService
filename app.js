@@ -37,7 +37,7 @@ async function start() {
 
         console.log(`⚙️ Config change detected from ${event.device_ip}`);
         
-        sendTrap();
+        sendTrap(event.device_ip);
 
         const device = await db.getDeviceDetails(event.device_ip);
         if (!device) {
@@ -79,7 +79,7 @@ async function start() {
   });
 }
 
-async function sendTrap() {
+async function sendTrap(deviceIp) {
         try {
           
             const { stdout, stderr } = await exec("snmptrap -v 2c -c public 192.168.4.113:1624 '' 1.3.6.1.4.1.59510.1.1 1.3.6.1.4.1.59510.1.5 s 'Config Diff found for device : " + deviceIp );
