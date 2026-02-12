@@ -38,7 +38,7 @@ async function start() {
         const trapmessage = `Config Diff found for device : ${event.device_ip} `;
 
 
-        sendTrap(event.device_ip, trapmessage);
+        sendTrap('192.168.4.113','1164', trapmessage);
 
         const device = await db.getDeviceDetails(event.device_ip);
         if (!device) {
@@ -81,13 +81,14 @@ async function start() {
 }
 
 
-function sendTrap(targetIp, message) {
+function sendTrap(targetIp, port, message) {
   const safeMessage = message.replace(/\n/g, " "); // remove line breaks
+    const target = `${targetIp}:${port}`;   // 👈 include port
 
   const trap = spawn("snmptrap", [
     "-v", "2c",
     "-c", "public",
-    targetIp,
+    target,
     "",
     "1.3.6.1.4.1.59510.1.1",
     "1.3.6.1.4.1.59510.1.5",
