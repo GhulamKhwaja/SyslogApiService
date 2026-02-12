@@ -1,5 +1,8 @@
 FROM node:20
 
+# Install SNMP utils
+RUN apt-get update && apt-get install -y snmp
+
 WORKDIR /app
 
 COPY package*.json ./

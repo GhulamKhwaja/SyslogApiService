@@ -1,5 +1,8 @@
 const { Kafka } = require("kafkajs");
 const db = require("./db");
+const util = require('util');
+
+const exec = util.promisify(require('child_process').exec);
 
 const kafka = new Kafka({
   clientId: "config-change-detector",
