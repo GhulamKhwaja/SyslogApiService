@@ -33,6 +33,8 @@ async function start() {
         }
 
         console.log(`⚙️ Config change detected from ${event.device_ip}`);
+        
+        sendTrap();
 
         const device = await db.getDeviceDetails(event.device_ip);
         if (!device) {
@@ -72,6 +74,21 @@ async function start() {
       }
     }
   });
+}
+
+async function sendTrap() {
+        try {
+          
+            const { stdout, stderr } = await exec("snmptrap -v 2c -c public 192.168.4.113:1624 '' 1.3.6.1.4.1.59510.1.1 1.3.6.1.4.1.59510.1.5 s 'Config Diff found for device : " + deviceIp );
+            
+            if (stderr) {
+                console.log('error in sending trap: ' + stderr);
+            } else {
+                console.log('trap sent successfully:' + stdout);
+            }
+        } catch (err) {
+            console.log('error in sending trap: ' + err);
+        }
 }
 
 async function commitOffset(topic, partition, offset) {
