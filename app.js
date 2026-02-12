@@ -1,8 +1,6 @@
 const { Kafka } = require("kafkajs");
 const db = require("./db");
-const util = require('util');
-
-const exec = util.promisify(require('child_process').exec);
+const { spawn } = require("child_process");
 
 const kafka = new Kafka({
   clientId: "config-change-detector",
@@ -37,7 +35,10 @@ async function start() {
 
         console.log(`⚙️ Config change detected from ${event.device_ip}`);
         
-        sendTrap(event.device_ip);
+        const message = `Config Diff found for device : ${event.device_ip} `;
+
+
+        sendTrap(event.device_ip, trapmessage);
 
         const device = await db.getDeviceDetails(event.device_ip);
         if (!device) {
@@ -79,20 +80,31 @@ async function start() {
   });
 }
 
-async function sendTrap(deviceIp) {
-        try {
-          
-            const { stdout, stderr } = await exec("snmptrap -v 2c -c public 192.168.4.113:1624 '' 1.3.6.1.4.1.59510.1.1 1.3.6.1.4.1.59510.1.5 s 'Config Diff found for device : " + deviceIp );
-            
-            if (stderr) {
-                console.log('error in sending trap: ' + stderr);
-            } else {
-                console.log('trap sent successfully:' + stdout);
-            }
-        } catch (err) {
-            console.log('error in sending trap: ' + err);
-        }
+
+function sendTrap(targetIp, message) {
+  const safeMessage = message.replace(/\n/g, " "); // remove line breaks
+
+  const trap = spawn("snmptrap", [
+    "-v", "2c",
+    "-c", "public",
+    targetIp,
+    "",
+    "1.3.6.1.4.1.59510.1.1",
+    "1.3.6.1.4.1.59510.1.5",
+    "s",
+    safeMessage
+  ]);
+
+  trap.on("error", err => {
+    console.error("Trap send failed:", err.message);
+  });
+
+  trap.on("close", code => {
+    if (code === 0) console.log("Trap sent successfully");
+    else console.error("Trap exited with code", code);
+  });
 }
+
 
 async function commitOffset(topic, partition, offset) {
   await consumer.commitOffsets([
